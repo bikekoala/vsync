@@ -1,7 +1,12 @@
 <?PHP
+/**
+ * 腾讯微博的授权验证调用类
+ */
 class Vs_Service_Oauth_Tencent extends Vs_Service_Abstract
 {
-    const API = 'http://open.t.qq.com/api/';
+    /**
+     * 请求code,accesstoken的接口url
+     */
     const AUTHORIZE = 'https://open.t.qq.com/cgi-bin/oauth2/authorize';
     const ACCESSTOKEN = 'https://open.t.qq.com/cgi-bin/oauth2/access_token';
 
@@ -20,7 +25,7 @@ class Vs_Service_Oauth_Tencent extends Vs_Service_Abstract
             'response_type' => $responseType,
             'wap' => $wap
         );
-        return self::$AUTHORIZE.'?'.http_build_query($params);
+        return self::AUTHORIZE.'?'.http_build_query($params);
     }
 
     /**
@@ -38,7 +43,7 @@ class Vs_Service_Oauth_Tencent extends Vs_Service_Abstract
             'code' => $code,
             'redirect_uri' => $redirectUri
         );
-        $url = self::$ACCESSTOKEN.'?'.http_build_query($params);
+        $url = self::ACCESSTOKEN.'?'.http_build_query($params);
         $curl = new Su_Curl($url);
         parse_str($curl->get(), $out);
         return $out;
@@ -56,7 +61,7 @@ class Vs_Service_Oauth_Tencent extends Vs_Service_Abstract
             'grant_type' => 'refresh_token',
             'refresh_token' => $_SESSION['t_refresh_token']
         );
-        $url = self::$ACCESSTOKEN.'?'.http_build_query($params);
+        $url = self::ACCESSTOKEN.'?'.http_build_query($params);
         $curl = new Su_Curl($url);
         parse_str($curl->get(), $out);
         if (isset($out['access_token'])) {
@@ -68,40 +73,23 @@ class Vs_Service_Oauth_Tencent extends Vs_Service_Abstract
     }
     
     /**
-     * 验证授权是否有效
-     */
-    public function checkOAuthValid()
-    {
-        //todo:使用api接口调用
-        $r = Vs_Service_Api_Tencent::api('user/info');
-        if (isset($r['data']['name'])) {
-            return true;
-        } else {
-            $this->clearOAuthInfo();
-            return false;
-        }
-    }
-    
-    /**
      * 清除授权
      */
     public function clearOAuthInfo()
     {
-        isset($_SESSION['t_access_token']) && unset($_SESSION['t_access_token']);
-        isset($_SESSION['t_refresh_token']) && unset($_SESSION['t_refresh_token']);
-        isset($_SESSION['t_openid']) && unset($_SESSION['t_openid']);
-        isset($_SESSION['t_expire_in']) && unset($_SESSION['t_expire_in']);
+        if (isset($_SESSION['t_access_token'])) unset($_SESSION['t_access_token']);
+        if (isset($_SESSION['t_refresh_token'])) unset($_SESSION['t_refresh_token']);
+        if (isset($_SESSION['t_openid'])) unset($_SESSION['t_openid']);
     }
 
     /**
      * 设置授权
-     * @param array $info
+     * @param $info 需要记录的SESSION
      */
     public function setOAuthInfo($info)
     {
         $_SESSION['t_access_token'] = $info['access_token'];
         $_SESSION['t_refresh_token'] = $info['refresh_token'];
         $_SESSION['t_openid'] = $info['openid'];
-        $_SESSION['t_expire_in'] = $info['expire_in'];
     }
 }

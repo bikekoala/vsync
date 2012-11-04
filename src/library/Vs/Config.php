@@ -9,6 +9,7 @@ class Vs_Config extends Su_Config
         /**
          * Tencent
          */
+        $conf['tencent']['account'] = 'doyoufly';
         $conf['tencent']['app_key'] = 801263889;
         $conf['tencent']['app_secret'] = '8e7ee4dab1ae84212e563f55ea309ee0';
 
