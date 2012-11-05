@@ -7,19 +7,21 @@ class Vs_Action_Main extends Vs_Action_Abstract
 
         // 清除授权
         if (0) {
-            $oauth = new Vs_Service_Oauth_Tencent;
-            $oauth->clearOAuthInfo();
-            exit;
+            $oauth = new Vs_Service_Tencent_Oauth;
+            $oauth->clearOauthInfo();
         }
 
-        // Tencent OAuth
-        $api = new Vs_Service_Api_Tencent;
+        // Tencent Oauth
+        $api = new Vs_Service_Tencent_Api;
+        // 若取得授权
         if (isset($_SESSION['t_access_token'])) {
             // 检查你是不是大熊的粉丝
-            if ($api->isIdol()) {
+            $r = $api->call('isIdol');
+            if ( ! $r['ret'] && current($r['data'])) {
                 // 获取个人资料
-                if ($info = $api->getUserInfo()) {
-                    echo "<img src='{$info['head']}/100' width=100 />";
+                $info = $api->call('getUserInfo');
+                if ( ! $info['ret']) {
+                    echo "<img src='{$info['data']['head']}/100' width=100 />";
                 } else {
                     echo '你隐身了么~<br />';
                 }
