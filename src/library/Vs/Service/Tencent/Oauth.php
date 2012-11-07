@@ -4,7 +4,7 @@
  * access_token 初级7天，高级15天
  * refresh_token 3个月
  */
-class Vs_Service_Tencent_Oauth extends Vs_Service_Tencent_Abstract
+class Vs_Service_Tencent_Oauth extends Vs_Service_Abstract
 {
     /**
      * 请求code,accesstoken的接口url
@@ -27,7 +27,7 @@ class Vs_Service_Tencent_Oauth extends Vs_Service_Tencent_Abstract
             'response_type' => $responseType,
             'wap' => $wap
         );
-        return self::AUTHORIZE.'?'.http_build_query($params);
+        return self::AUTHORIZE . '?' . http_build_query($params);
     }
 
     /**
@@ -45,7 +45,7 @@ class Vs_Service_Tencent_Oauth extends Vs_Service_Tencent_Abstract
             'code' => $code,
             'redirect_uri' => $redirectUri
         );
-        $url = self::ACCESSTOKEN.'?'.http_build_query($params);
+        $url = self::ACCESSTOKEN . '?' . http_build_query($params);
         $curl = new Su_Curl($url);
         parse_str($curl->get(), $out);
         return $out;
@@ -62,7 +62,7 @@ class Vs_Service_Tencent_Oauth extends Vs_Service_Tencent_Abstract
             'grant_type' => 'refresh_token',
             'refresh_token' => $_SESSION['t_refresh_token']
         );
-        $url = self::ACCESSTOKEN.'?'.http_build_query($params);
+        $url = self::ACCESSTOKEN . '?' . http_build_query($params);
         $curl = new Su_Curl($url);
         parse_str($curl->get(), $out);
         if (isset($out['access_token'])) {

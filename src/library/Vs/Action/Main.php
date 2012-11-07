@@ -5,13 +5,34 @@ class Vs_Action_Main extends Vs_Action_Abstract
 	{
         session_start();
 
+        /**
+         * Sina OAuth
+         */
+
+        // 清除授权
+        if (0) {
+            $oauth = new Vs_Service_Sina_Oauth;
+            $oauth->clearOauthInfo();
+        }
+
+        // 若取得授权
+        if (isset($_SESSION['s_access_token'])) {
+            echo "U got it.";
+        } else {
+            echo '<a href="?do=Oauth.Sina">围脖登录</a>';
+        }
+
+        /**
+         * Tencent OAuth
+         */
+        /*
+
         // 清除授权
         if (0) {
             $oauth = new Vs_Service_Tencent_Oauth;
             $oauth->clearOauthInfo();
         }
 
-        // Tencent Oauth
         $api = new Vs_Service_Tencent_Api;
         // 若取得授权
         if (isset($_SESSION['t_access_token'])) {
@@ -31,5 +52,6 @@ class Vs_Action_Main extends Vs_Action_Abstract
         } else {
             echo '<a href="?do=Oauth.Tencent">球球登录</a>';
         }
+        */
     }
 }
