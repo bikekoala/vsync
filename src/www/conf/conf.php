@@ -38,8 +38,10 @@ $conf['ctrl_front']['phase']['output']['format']['cli'] = 'text';
 /**
  * 异常信息控制
  */
+/*
 $conf['fault']['class'] = 'Vs_Action_Fault';
 $conf['fault']['tpl'] = 'fault';
+*/
 
 /**
  * 模板配置文件

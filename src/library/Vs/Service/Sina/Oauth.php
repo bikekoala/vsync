@@ -54,16 +54,26 @@ class Vs_Service_Sina_Oauth extends Vs_Service_Abstract
      * 设置授权
      * @param $info 需要记录的SESSION
      */
-    public function setOauthInfo($info)
+    public function setAuthInfo($info)
     {
         $_SESSION['s_access_token'] = $info['access_token'];
+        $_SESSION['s_uid'] = $info['uid'];
     }
 
     /**
      * 清除授权
      */
-    public function clearOauthInfo()
+    public function clearAuthInfo()
     {
         if (isset($_SESSION['s_access_token'])) unset($_SESSION['s_access_token']);
+        if (isset($_SESSION['s_uid'])) unset($_SESSION['s_uid']);
+    }
+
+    /**
+     * 检查授权
+     */
+    public function checkAuth()
+    {
+        return isset($_SESSION['s_access_token']) ? $_SESSION['s_access_token'] : false;
     }
 }

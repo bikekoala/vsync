@@ -77,7 +77,7 @@ class Vs_Service_Tencent_Oauth extends Vs_Service_Abstract
      * 设置授权
      * @param $info 需要记录的SESSION
      */
-    public function setOauthInfo($info)
+    public function setAuthInfo($info)
     {
         $_SESSION['t_access_token'] = $info['access_token'];
         $_SESSION['t_refresh_token'] = $info['refresh_token'];
@@ -87,10 +87,42 @@ class Vs_Service_Tencent_Oauth extends Vs_Service_Abstract
     /**
      * 清除授权
      */
-    public function clearOauthInfo()
+    public function clearAuthInfo()
     {
         if (isset($_SESSION['t_access_token'])) unset($_SESSION['t_access_token']);
         if (isset($_SESSION['t_refresh_token'])) unset($_SESSION['t_refresh_token']);
         if (isset($_SESSION['t_openid'])) unset($_SESSION['t_openid']);
+    }
+
+    /**
+     * 检查授权
+     */
+    public function checkAuth()
+    {
+        if (isset($_SESSION['t_access_token'])) {
+            // 请求用户接口
+            $api = new Vs_Service_Tencent_Tweet_Api;
+            $r = $api->getUserInfo();
+            // 鉴权失败
+            if (3 === $r['ret']) {
+                // accesstoken过期
+                if (37 === $r['errcode']) {
+                    // 刷新授权
+                    return $this->refreshToken();
+                // 其他错误
+                } else {
+                    // 清除授权信息,冷不丁的会出现未知错误，再次刷新即可
+                    if (41 !== $r['errcode']) {
+                        $this->clearAuthInfo();
+                    }
+                    return false;
+                }
+            // 成功返回
+            } else {
+                return true;
+            }
+        } else {
+            return false;
+        }
     }
 }
