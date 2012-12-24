@@ -8,7 +8,7 @@ class Vs_Action_Main extends Vs_Action_Abstract
          */
         // 若取得授权
         if ($this->auth['sina']) {
-            $api = new Vs_Service_Sina_Tweet_Api;
+            $api = new Vs_Service_Sina_Api;
             $info = $api->getUserInfo();
             //if成功
             echo "<img src='{$info['avatar_large']}' width=100 />";
@@ -21,7 +21,7 @@ class Vs_Action_Main extends Vs_Action_Abstract
          */
         // 若取得授权
         if ($this->auth['tencent']) {
-            $api = new Vs_Service_Tencent_Tweet_Api;
+            $api = new Vs_Service_Tencent_Api;
             // 检查你是不是大熊的粉丝
             if ($api->isFans()) {
                 // 获取个人资料

@@ -4,7 +4,7 @@
  * access_token 初级7天，高级15天
  * refresh_token 3个月
  */
-class Vs_Service_Tencent_Oauth extends Vs_Service_Abstract
+class Vs_Service_Tencent_Auth extends Vs_Service_Abstract
 {
     /**
      * 请求code,accesstoken的接口url
@@ -101,7 +101,7 @@ class Vs_Service_Tencent_Oauth extends Vs_Service_Abstract
     {
         if (isset($_SESSION['t_access_token'])) {
             // 请求用户接口
-            $api = new Vs_Service_Tencent_Tweet_Api;
+            $api = new Vs_Service_Tencent_Api;
             $r = $api->getUserInfo();
             // 鉴权失败
             if (3 === $r['ret']) {

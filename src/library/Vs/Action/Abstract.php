@@ -18,11 +18,20 @@ abstract class Vs_Action_Abstract extends Su_Ctrl_Action
 		$this->run();
 	}
 
+    public function outputJson($data = array(), $stat = true)
+    {
+        $params['stat'] = $stat;
+        $params['data'] = $data;
+
+        $this->response($params);
+        $this->format('json');
+    }
+
     private function _checkAuth()
     {
-        $o = new Vs_Service_Tencent_Oauth;
+        $o = new Vs_Service_Tencent_Auth;
         $this->auth['tencent'] = $o->checkAuth();
-        $o = new Vs_Service_Sina_Oauth;
+        $o = new Vs_Service_Sina_Auth;
         $this->auth['sina'] = $o->checkAuth();
     }
 }

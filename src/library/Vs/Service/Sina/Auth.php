@@ -4,7 +4,7 @@
  * access_token 测试1天,普通7天，真抠门。。。
  * refresh_token 3个月
  */
-class Vs_Service_Sina_Oauth extends Vs_Service_Abstract
+class Vs_Service_Sina_Auth extends Vs_Service_Abstract
 {
     /**
      * 请求code,accesstoken的接口url

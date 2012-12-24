@@ -10,7 +10,7 @@ class Vs_Action_Oauth_Sina extends Vs_Action_Abstract
     {
         // 回调地址,需要和管理平台设置的回调地址一致
         $callback = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?do=Oauth.Sina';
-        $auth = new Vs_Service_Sina_Oauth;
+        $auth = new Vs_Service_Sina_Auth;
         if (isset($this->request->code)) {
             // 获取授权token
             $out = $auth->getAccessToken($this->request->code, $callback);

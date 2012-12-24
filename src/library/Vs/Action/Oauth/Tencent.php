@@ -10,7 +10,7 @@ class Vs_Action_Oauth_Tencent extends Vs_Action_Abstract
     {
         // 回调地址
         $callback = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?do=Oauth.Tencent';
-        $auth = new Vs_Service_Tencent_Oauth;
+        $auth = new Vs_Service_Tencent_Auth;
         if (isset($this->request->code)) {
             // 获取授权token
             $out = $auth->getAccessToken($this->request->code, $callback);
