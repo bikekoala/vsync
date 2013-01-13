@@ -12,22 +12,26 @@ abstract class Vs_Action_Abstract extends Su_Ctrl_Action
         session_start();
 
         // 验证授权
-        $this->_needAuth && $this->_checkAuth();
+        $this->_needAuth && $this->_getAuth();
 
         // 执行请求
 		$this->run();
 	}
 
-    public function outputJson($data = array(), $stat = true)
+    public function outputJson($data, $stat = true)
     {
         $params['stat'] = $stat;
-        $params['data'] = $data;
+        if (is_array($data)) {
+            $params = array_merge($params, $data);
+        } else {
+            $params['msg'] = $data;
+        }
 
         $this->response($params);
         $this->format('json');
     }
 
-    private function _checkAuth()
+    private function _getAuth()
     {
         $o = new Vs_Service_Tencent_Auth;
         $this->auth['tencent'] = $o->checkAuth();

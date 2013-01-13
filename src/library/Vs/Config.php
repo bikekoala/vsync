@@ -22,7 +22,7 @@ class Vs_Config extends Su_Config
         /**
          * Mysql pdo
          */
-        $conf['pdo'] = '';
+        $conf['pdo'] = 'mysql://root@127.0.0.1:3306?dbname=vsync';
 
 		$this->data = $conf;   
 	}

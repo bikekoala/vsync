@@ -4,19 +4,6 @@ class Vs_Action_Main extends Vs_Action_Abstract
 	public function run()
 	{
         /**
-         * Sina
-         */
-        // 若取得授权
-        if ($this->auth['sina']) {
-            $api = new Vs_Service_Sina_Api;
-            $info = $api->getUserInfo();
-            //if成功
-            echo "<img src='{$info['avatar_large']}' width=100 />";
-        } else {
-            echo '<a href="?do=Oauth.Sina">围脖登录</a>';
-        }
-
-        /**
          * Tencent
          */
         // 若取得授权
@@ -32,6 +19,19 @@ class Vs_Action_Main extends Vs_Action_Abstract
             }
         } else {
             echo '<a href="?do=Oauth.Tencent">球球登录</a>';
+        }
+
+        /**
+         * Sina
+         */
+        // 若取得授权
+        if ($this->auth['sina']) {
+            $api = new Vs_Service_Sina_Api;
+            $info = $api->getUserInfo();
+            //if成功
+            echo "<img src='{$info['avatar_large']}' width=100 />";
+        } else {
+            echo '<a href="?do=Oauth.Sina">围脖登录</a>';
         }
     }
 }
