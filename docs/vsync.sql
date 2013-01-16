@@ -10,9 +10,9 @@ CREATE TABLE `sina` (
 -- Create syntax for TABLE 'sync'
 CREATE TABLE `sync` (
       `id` char(32) NOT NULL COMMENT '唯一同步id',
-      `t_id` char(42) NOT NULL COMMENT '腾讯表id',
-      `s_id` char(42) NOT NULL COMMENT '新浪表id',
-      `type` tinyint(2) unsigned NOT NULL COMMENT '同步方式(1双向2关闭3腾讯->新浪4新浪->腾讯)',
+      `t_id` int(10) NOT NULL COMMENT '腾讯表id',
+      `s_id` int(10) NOT NULL COMMENT '新浪表id',
+      `type` tinyint(2) unsigned NOT NULL COMMENT '同步方式(0关闭1双向2腾讯->新浪3新浪->腾讯)',
       `ctime` int(10) unsigned NOT NULL COMMENT '创建时间',
       `mtime` int(10) unsigned NOT NULL COMMENT '更改时间',
       PRIMARY KEY (`id`)

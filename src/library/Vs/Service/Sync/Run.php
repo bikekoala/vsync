@@ -4,4 +4,7 @@
  */
 class Vs_Service_Sync_Run extends Vs_Service_Abstract
 {
+    public function zouni()
+    {
+    }
 }

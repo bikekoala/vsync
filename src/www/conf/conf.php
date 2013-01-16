@@ -11,7 +11,7 @@ $conf['debug'] = true;
  * level 0-7 EMERG, ALERT, CRIT, ERROR, WARN, NOTICE, INFO, DEBUG
  */
 $conf['notice_log']['name'] = 'infolog';
-$conf['notice_log']['write'] = SYS_LOG . '/log.douban';
+$conf['notice_log']['write'] = SYS_LOG . '/log.vsync';
 $conf['notice_log']['level'] = 7;
 
 /**

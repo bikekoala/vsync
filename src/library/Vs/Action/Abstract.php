@@ -27,8 +27,7 @@ abstract class Vs_Action_Abstract extends Su_Ctrl_Action
             $params['msg'] = $data;
         }
 
-        $this->response($params);
-        $this->format('json');
+        exit(json_encode($params));
     }
 
     private function _getAuth()

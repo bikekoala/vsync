@@ -30,7 +30,7 @@ class Vs_Service_Tencent_Api extends Vs_Service_Abstract
         $params['openid'] = $_SESSION['t_openid'];
         $params['oauth_consumer_key'] = $this->conf['tencent']['app_key'];
         $params['oauth_version'] = '2.a';
-        $params['clientip'] = Su_func::ip();
+        $params['clientip'] = Su_Func::ip();
         $params['scope'] = 'all';
         $params['appfrom'] = 'php-sdk2.0beta';
         $params['seqid'] = time();

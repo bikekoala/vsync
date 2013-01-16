@@ -18,6 +18,14 @@ class Vs_Config extends Su_Config
          */
         $conf['sina']['app_key'] = 3416304519;
         $conf['sina']['app_secret'] = '63982b8a4c7eb681ecb4702b4f270c54';
+        
+        /**
+         * Sync type
+         */
+        $conf['sync']['duplex'] = 1;
+        $conf['sync']['t2s'] = 2;
+        $conf['sync']['s2t'] = 3;
+        $conf['sync']['close'] = 0;
 
         /**
          * Mysql pdo
