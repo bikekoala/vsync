@@ -1,38 +1,92 @@
 <?PHP
 /**
- * 标记同步方式，并记录所需凭证
+ * Vs_Service_Sync_Mark
+ * 记录围脖同步方式
+ *
+ * @author popfeng <popfeng@yeah.net>
  */
 class Vs_Service_Sync_Mark extends Vs_Service_Sync_Abstract
 {
+    /**
+     * duplex
+     * 双向同步围脖
+     *
+     * @return void
+     */
     public function duplex()
     {
-        $this->_setType($this->conf['sync']['duplex']);
+        $this->_process($this->conf['sync']['duplex']);
     }
 
+    /**
+     * tencentToSina
+     * 腾讯围脖->新浪围脖
+     *
+     * @return void
+     */
     public function tencentToSina()
     {
-        $this->_setType($this->conf['sync']['t2s']);
+        $this->_process($this->conf['sync']['t2s']);
     }
 
+    /**
+     * sinaToTencent
+     * 新浪围脖->腾讯围脖
+     *
+     * @return void
+     */
     public function sinaToTencent()
     {
-        $this->_setType($this->conf['sync']['s2t']);
+        $this->_process($this->conf['sync']['s2t']);
     }
 
+    /**
+     * close
+     * 关闭同步
+     *
+     * @return void
+     */
     public function close()
     {
-        $this->_setType($this->conf['sync']['close']);
+        $this->_process($this->conf['sync']['close']);
     }
 
-    private function _setType($type)
+    /**
+     * _process
+     * 处理同步请求
+     *
+     * @param int $type
+     * @return void
+     */
+    private function _process($type)
     {
-        $id = $this->getSyncId();
-        $stat = Vs_Entity_Sync::single()->update($id, $type);
+        // 更新同步记录
+        $this->_setSync($type);
 
-        if (! $stat) {
-            $tid = Vs_Entity_Tencent::single()->add($_SESSION['t_access_token'], $_SESSION['t_refresh_token'], $_SESSION['t_openid']);
-            $sid = Vs_Entity_Sina::single()->add($_SESSION['s_access_token'], $_SESSION['s_uid']);
-            Vs_Entity_Sync::single()->add($id, $tid, $sid, $type);
-        }
+        // 马上同步一下
+        $this->sync($type);
+
+        // todo:提醒重新授权
+        $this->notify();
+    }
+
+    /**
+     * _setSync
+     * 更新同步数据，用于异步同步
+     *
+     * @param int $type
+     * @return void
+     */
+    private function _setSync($type)
+    {
+        $info = $this->getInfo();
+        $params['id'] = $this->getSyncId();
+        $params['t_access_token'] = $info['t_access_token'];
+        $params['t_openid'] = $info['t_openid'];
+        $params['s_access_token'] = $info['s_access_token'];
+        $params['s_uid'] = $info['s_uid'];
+        $params['type'] = $type;
+        $params['time'] = time();
+        Vs_Entity_Sync::single()->add($params);
     }
 }

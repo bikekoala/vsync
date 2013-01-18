@@ -1,59 +1,108 @@
 <?PHP
+/**
+ * Vs_Entity_Sync
+ * 同步表的操作方法
+ *
+ * @author popfeng <popfeng@yeah.net>
+ */
 class Vs_Entity_Sync extends Vs_Entity_Abstract
 {
-    protected $table = 'sync';
+    protected $table = 'sync'; // 表名
 
-    public function update($id, $type)
+    /**
+     * add
+     * 新建/更新一条同步记录
+     *
+     * @param array $params
+     * @return bool
+     */
+    public function add($params)
     {
-        $time = time();
-        $sql = "UPDATE `{$this->table}`
-                SET `type`={$type},
-                    `mtime`={$time}
-                WHERE `id`='{$id}'
-                LIMIT 1";
-        try {
-            return (bool) $this->pdo->exec($sql);
-        } catch (PDOException $e) {
-            throw new Exception($e->getMessage(), 500);
-        }
-    }
-
-    public function add($id, $tid, $sid, $type)
-    {
-        // relation
-        $fields['id'] = $id;
-        $fields['t_id'] = $tid;
-        $fields['s_id'] = $sid;
-        $fields['type'] = $type;
-        $fields['ctime'] = time();
         // bindvalue
-        $keys = array_keys($fields);
-        $sql = "INSERT INTO `{$this->table}` SET ";
-        $sql .= Su_Db::genSqlValueStr($keys, $fields);
+        $keys = array_keys($params);
+        $vals= Su_Db::genSqlValueStr($keys, $params);
+        $sql = "INSERT INTO `{$this->table}` 
+                SET {$vals} 
+                ON DUPLICATE KEY
+                UPDATE {$vals}";
         $sth = $this->pdo->prepare($sql);
-        Su_Db::genSqlBindValue($sth, $keys, $fields);
-        // insert
+        Su_Db::genSqlBindValue($sth, $keys, $params);
+
+        // update
         try {
-            return $sth->execute();
+            return (bool) $sth->execute();
         } catch (PDOException $e) {
             throw new Exception($e->getMessage(), 500);
         }
     }
 
-    public function get()
+    /**
+     * update
+     * 通过唯一标识更新同步数据
+     *
+     * @param string $id
+     * @param array $params
+     * @return bool
+     */
+    public function update($id, $params = array())
     {
-        $sql = "SELECT m.type,
-                       t.access_token AS t_access_token,
-                       t.refresh_token AS t_refresh_token,
-                       t.openid AS t_openid,
-                       s.access_token AS s_access_token,
-                       s.uid AS s_uid
-                FROM `{$this->table}` AS m
-                LEFT JOIN `tencent` AS t
-                ON m.t_id=t.id
-                LEFT JOIN `sina` AS s
-                ON m.s_id=s.id
-                WHERE m.type!={$this->conf['sync']['close']}";
+        // bindvalue
+        $keys = array_keys($params);
+        $sql = "UPDATE `{$this->table}` SET ";
+        $sql .= Su_Db::genSqlValueStr($keys, $params);
+        $sql .= " WHERE id='{$id}'";
+        $sth = $this->pdo->prepare($sql);
+        Su_Db::genSqlBindValue($sth, $keys, $params);
+
+        // update
+        try {
+            return (bool) $sth->execute();
+        } catch (PDOException $e) {
+            throw new Exception($e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * get
+     * 根据id获取一条同步记录
+     *
+     * @param string $id
+     * @return array
+     */
+    public function get($id)
+    {
+        // 静态化
+        static $data;
+        if ($data) {
+            return $data;
+        }
+
+        $sql = "SELECT *
+                FROM `{$this->table}`
+                WHERE `id`='{$id}'";
+        $sth = $this->pdo->prepare($sql);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        try {
+            $sth->execute();
+            $data = $sth->fetch();
+            return $data;
+        } catch (PDOException $e) {
+            throw new Exception($e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * getList
+     * 获取同步记录列表
+     *
+     * @return array
+     */
+    public function getList()
+    {
+        $sql = "SELECT *
+                FROM `{$this->table}`
+                WHERE type!={$this->conf['sync']['close']}
+                ORDER BY `time` DESC";
         $sth = $this->pdo->prepare($sql);
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         try {

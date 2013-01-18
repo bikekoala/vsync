@@ -1,4 +1,10 @@
 <?PHP
+/**
+ * Vs_Entity_Abstract
+ * 实体抽象类
+ *
+ * @author popfeng <popfeng@yeah.net>
+ */
 class Vs_Entity_Abstract
 {
 	protected $pdo;
@@ -12,7 +18,10 @@ class Vs_Entity_Abstract
     }
 
     /**
+     * single
      * single 单例调用的实现
+     *
+     * @return void
      */
     public static function single()
     {

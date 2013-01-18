@@ -1,4 +1,10 @@
 <?PHP   
+/**
+ * Vs_Config
+ * app配置信息
+ *
+ * @author popfeng <popfeng@yeah.net>
+ */
 class Vs_Config extends Su_Config
 { 
     /**
@@ -28,6 +34,14 @@ class Vs_Config extends Su_Config
         $conf['sync']['close'] = 0;
 
         /**
+         * cookie
+         */
+        $conf['cookie']['key'] = 'suv_auth'; // the key of cookie
+        $conf['cookie']['encrypt_key'] = 'lhasa'; // cookie des加密的key
+        $conf['cookie']['serial_secret'] = 'Let life be beautiful like summer flowers'; // 验证auth信息完整性的字符串 
+        $conf['cookie']['expire_time'] = 7*60*60*24; // 过期时间，视应用授权期限定
+
+        /**
          * Mysql pdo
          */
         $conf['pdo'] = 'mysql://root@127.0.0.1:3306?dbname=vsync';
@@ -36,8 +50,11 @@ class Vs_Config extends Su_Config
 	}
 
 	/**
+	 * single
 	 * single 单例调用的实现   
-	 */ 
+	 *
+	 * @return object
+	 */
 	public static function single() 
 	{ 
 		static $instance;      

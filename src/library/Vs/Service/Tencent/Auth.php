@@ -1,8 +1,10 @@
 <?PHP
 /**
+ * Vs_Service_Tencent_Auth
  * 腾讯微博的授权验证调用类
  * access_token 初级7天，高级15天
- * refresh_token 3个月
+ *
+ * @author popfeng <popfeng@yeah.net>
  */
 class Vs_Service_Tencent_Auth extends Vs_Service_Abstract
 {
@@ -13,10 +15,12 @@ class Vs_Service_Tencent_Auth extends Vs_Service_Abstract
     const ACCESSTOKEN = 'https://open.t.qq.com/cgi-bin/oauth2/access_token';
 
     /**
+     * getAuthorizeURL
      * 获取授权URL
-     * @param $redirectUri 授权成功后的回调地址，即第三方应用的url
-     * @param $responseType 授权类型，为code
-     * @param $wap 用于指定手机授权页的版本，默认PC，值为1时跳到wap1.0的授权页，为2时同理
+     *
+     * @param string $redirectUri 授权成功后的回调地址，即第三方应用的url
+     * @param string $responseType 授权类型，为code
+     * @param string $wap 用于指定手机授权页的版本，默认PC，值为1时跳到wap1.0的授权页，为2时同理
      * @return string
      */
     public function getAuthorizeURL($redirectUri, $responseType = 'code', $wap = false)
@@ -31,9 +35,11 @@ class Vs_Service_Tencent_Auth extends Vs_Service_Abstract
     }
 
     /**
+     * getAccessToken
      * 获取请求token的url
-     * @param $code 调用authorize时返回的code
-     * @param $redirectUri 回调地址，必须和请求code时的redirectUri一致
+     *
+     * @param string $code 调用authorize时返回的code
+     * @param string $redirectUri 回调地址，必须和请求code时的redirectUri一致
      * @return array
      */
     public function getAccessToken($code, $redirectUri)
@@ -50,79 +56,41 @@ class Vs_Service_Tencent_Auth extends Vs_Service_Abstract
         parse_str($curl->get(), $out);
         return $out;
     }
-    
-    /**
-     * 刷新授权信息
-     */
-    public function refreshToken()
-    {
-        $params = array(
-            'client_id' => $this->conf->tencent->app_key,
-            'client_secret' => $this->conf->tencent->app_secret,
-            'grant_type' => 'refresh_token',
-            'refresh_token' => $_SESSION['t_refresh_token']
-        );
-        $url = self::ACCESSTOKEN . '?' . http_build_query($params);
-        $curl = new Su_Curl($url);
-        parse_str($curl->get(), $out);
-        if (isset($out['access_token'])) {
-            $this->setOauthInfo($out);
-            return true;
-        } else {
-            return false;
-        }
-    }
 
     /**
+     * setAuth
      * 设置授权
-     * @param $info 需要记录的SESSION
+     *
+     * @param $auth 需要记录的授权信息
+     * @return void
      */
-    public function setAuthInfo($info)
+    public function setAuth($auth)
     {
-        $_SESSION['t_access_token'] = $info['access_token'];
-        $_SESSION['t_refresh_token'] = $info['refresh_token'];
-        $_SESSION['t_openid'] = $info['openid'];
+        if (isset($auth['access_token']) && isset($auth['openid'])) {
+            $info['t_access_token'] = $auth['access_token'];
+            $info['t_openid'] = $auth['openid'];
+            $auth = array_merge($this->_getAuth(), $info);
+        }
+        $auth = $this->_serializeAuth($auth);
+        Su_Func::cookie($this->conf->cookie->key, $auth, $this->conf->cookie->expire_time, '');
+
     }
 
     /**
+     * clearAuth
      * 清除授权
+     *
+     * @return void
      */
-    public function clearAuthInfo()
+    public function clearAuth()
     {
-        if (isset($_SESSION['t_access_token'])) unset($_SESSION['t_access_token']);
-        if (isset($_SESSION['t_refresh_token'])) unset($_SESSION['t_refresh_token']);
-        if (isset($_SESSION['t_openid'])) unset($_SESSION['t_openid']);
-    }
-
-    /**
-     * 检查授权
-     */
-    public function checkAuth()
-    {
-        if (isset($_SESSION['t_access_token'])) {
-            // 请求用户接口
-            $api = new Vs_Service_Tencent_Api;
-            $r = $api->getUserInfo();
-            // 鉴权失败
-            if (3 === $r['ret']) {
-                // accesstoken过期
-                if (37 === $r['errcode']) {
-                    // 刷新授权
-                    return $this->refreshToken();
-                // 其他错误
-                } else {
-                    // 清除授权信息,冷不丁的会出现未知错误，再次刷新即可
-                    if (41 !== $r['errcode']) {
-                        $this->clearAuthInfo();
-                    }
-                    return false;
-                }
-            // 成功返回
-            } else {
-                return true;
-            }
+        $auth = $this->_getAuth();
+        if (isset($auth['t_access_token'])) unset($auth['t_access_token']);
+        if (isset($auth['t_openid'])) unset($auth['t_openid']);
+        if (empty($auth)) {
+            Su_Func::cookie($this->conf->cookie->key, null, -5, '');
         } else {
-            return false;
+            $this->setAuth($auth);
         }
     }
 }

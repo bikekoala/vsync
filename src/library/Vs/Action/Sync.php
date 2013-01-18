@@ -1,6 +1,9 @@
 <?PHP
 /**
- * 微博同步方式
+ * Vs_Action_Sync
+ * 设置微博同步方式
+ *
+ * @author popfeng <popfeng@yeah.net>
  */
 class Vs_Action_Sync extends Vs_Action_Abstract
 {
@@ -18,13 +21,25 @@ class Vs_Action_Sync extends Vs_Action_Abstract
         }
     }
 
+    /**
+     * _checkAuth
+     * 验证授权
+     *
+     * @return void
+     */
     private function _checkAuth()
     {
         if (! $this->auth['tencent'] || ! $this->auth['sina']) {
-            $this->outputJson('请重新登录！', false);
+            $this->outputJson('刷新页面，重新登录下吧~', false);
         }
     }
 
+    /**
+     * _mark
+     * 记录围脖同步方式
+     *
+     * @return void
+     */
     private function _mark()
     {
         $mark = new Vs_Service_Sync_Mark;
