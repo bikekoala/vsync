@@ -25,7 +25,14 @@ class Vs_Service_Abstract
      */
     public function getInfo($key = '')
     {
-        $info = empty($this->_info) ? $this->_getAuth() : $this->_info;
+        // 动态设置info信息
+        if (empty($this->_info)) {
+            $r = new Vs_Service_Auth;
+            $info = $r->getAuth();
+        } else {
+            $info = $this->_info;
+        }
+
         if ('' === $key) {
             return $info;
         } else {
@@ -47,58 +54,30 @@ class Vs_Service_Abstract
     public function setInfo($data)
     {
         $this->_info = $data;
-    } 
-
-    /**
-     * _getAuth
-     * 获取记录在cookie中的授权
-     *
-     * @return array
-     */
-    protected function _getAuth()
-    {
-        if (isset($_COOKIE[$this->conf->cookie->key])) {
-            return $this->_unserializeAuth($_COOKIE[$this->conf->cookie->key]);
-        } else {
-            return array();
-        }
     }
 
     /**
-     * _unserializeAuth
-     * 解序列化cookie授权
+     * getSyncId
+     * 组装同步唯一标识
      *
-     * @param array $auth
-     * @return array
+     * @return string
      */
-    protected function _unserializeAuth($auth)
+    public function getSyncId()
     {
-        $auth = Su_Func::encrypt($auth, $this->conf->cookie->encrypt_key, 'DECODE');
-        $tmps = explode('|', $auth);
-        if (count($tmps) !== 3)  {
-            throw new Exception('Invalid su_auth.', 400);
-        }
-        $arr['auth'] = $tmps[0];
-        $arr['timestamp'] = $tmps[1];
-        if (crc32(implode('|', $arr) . $this->conf->cookie->serial_secret) != $tmps[2]) {
-            throw new Exception('Auth validate fail.', 400);
-        }
-        return unserialize($arr['auth']);
+        $info = $this->getInfo();
+        return md5($info['t_openid'] . $info['s_uid']);
     }
 
     /**
-     * _serializeAuth
-     * 序列化cookie授权
+     * getExpireTime
+     * 计算最短的过期时间秒数
      *
-     * @param array $auth
-     * @return array
+     * @return int
      */
-    protected function _serializeAuth($auth)
+    public function getExpireTime()
     {
-        $arr[] = serialize($auth);
-        $arr[] = time();
-        $str = implode('|', $arr);
-        $str = $str . '|' . crc32($str . $this->conf->cookie->serial_secret);
-        return Su_Func::encrypt($str, $this->conf->cookie->encrypt_key);
+        $sinaExpireTime = $this->conf->sina->expire_time;
+        $tencentExpireTime = $this->conf->tencent->expire_time;
+        return min($sinaExpireTime, $tencentExpireTime) * 24 * 60 * 60;
     }
 }

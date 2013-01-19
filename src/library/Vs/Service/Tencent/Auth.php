@@ -6,7 +6,7 @@
  *
  * @author popfeng <popfeng@yeah.net>
  */
-class Vs_Service_Tencent_Auth extends Vs_Service_Abstract
+class Vs_Service_Tencent_Auth extends Vs_Service_Auth
 {
     /**
      * 请求code,accesstoken的接口url
@@ -69,11 +69,10 @@ class Vs_Service_Tencent_Auth extends Vs_Service_Abstract
         if (isset($auth['access_token']) && isset($auth['openid'])) {
             $info['t_access_token'] = $auth['access_token'];
             $info['t_openid'] = $auth['openid'];
-            $auth = array_merge($this->_getAuth(), $info);
+            $auth = array_merge($this->getAuth(), $info);
         }
         $auth = $this->_serializeAuth($auth);
-        Su_Func::cookie($this->conf->cookie->key, $auth, $this->conf->cookie->expire_time, '');
-
+        Su_Func::cookie($this->conf->cookie->key, $auth, $this->getExpireTime(), '');
     }
 
     /**
@@ -84,7 +83,7 @@ class Vs_Service_Tencent_Auth extends Vs_Service_Abstract
      */
     public function clearAuth()
     {
-        $auth = $this->_getAuth();
+        $auth = $this->getAuth();
         if (isset($auth['t_access_token'])) unset($auth['t_access_token']);
         if (isset($auth['t_openid'])) unset($auth['t_openid']);
         if (empty($auth)) {
@@ -92,5 +91,6 @@ class Vs_Service_Tencent_Auth extends Vs_Service_Abstract
         } else {
             $this->setAuth($auth);
         }
+        $_COOKIE = $auth;
     }
 }

@@ -6,7 +6,7 @@
  *
  * @author popfeng <popfeng@yeah.net>
  */
-class Vs_Service_Sina_Auth extends Vs_Service_Abstract
+class Vs_Service_Sina_Auth extends Vs_Service_Auth
 {
     /**
      * 请求code,accesstoken的接口url
@@ -69,10 +69,10 @@ class Vs_Service_Sina_Auth extends Vs_Service_Abstract
         if (isset($auth['access_token']) && isset($auth['uid'])) {
             $info['s_access_token'] = $auth['access_token'];
             $info['s_uid'] = $auth['uid'];
-            $auth = array_merge($this->_getAuth(), $info);
+            $auth = array_merge($this->getAuth(), $info);
         }
         $auth = $this->_serializeAuth($auth);
-        Su_Func::cookie($this->conf->cookie->key, $auth, $this->conf->cookie->expire_time, '');
+        Su_Func::cookie($this->conf->cookie->key, $auth, $this->getExpireTime(), '');
     }
 
     /**
@@ -83,7 +83,7 @@ class Vs_Service_Sina_Auth extends Vs_Service_Abstract
      */
     public function clearAuth()
     {
-        $auth = $this->_getAuth();
+        $auth = $this->getAuth();
         if (isset($auth['s_access_token'])) unset($auth['s_access_token']);
         if (isset($auth['s_uid'])) unset($auth['s_uid']);
         if (empty($auth)) {
@@ -91,5 +91,6 @@ class Vs_Service_Sina_Auth extends Vs_Service_Abstract
         } else {
             $this->setAuth($auth);
         }
+        $_COOKIE = $auth;
     }
 }
