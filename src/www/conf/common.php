@@ -13,6 +13,8 @@ define('TEMP_PATH', SYS_PATH . '/tmp');
 define('HOST', $_SERVER['HTTP_HOST']);
 //当前url
 define('URL', "http://{$_SERVER['HTTP_HOST']}{$_SERVER['PHP_SELF']}?{$_SERVER['QUERY_STRING']}");
+//当前首页
+define('INDEX', "http://{$_SERVER['HTTP_HOST']}{$_SERVER['PHP_SELF']}");
 //基础配置
 include dirname(__FILE__) . '/conf.php';
 ini_set('display_errors', $conf['debug']);

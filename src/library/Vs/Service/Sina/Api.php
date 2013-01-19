@@ -72,6 +72,34 @@ class Vs_Service_Sina_Api extends Vs_Service_Abstract
     }
 
     /**
+     * sendNotification
+     * 发送一条私信通知
+     *
+     * @param string $text
+     * @return void
+     */
+    public function sendNotification($text)
+    {
+        // todo: 高级接口（需要授权）
+    }
+
+    /**
+     * commentTweet
+     * 评论一条围脖
+     *
+     * @param string $tid
+     * @param string $text
+     * @return void
+     */
+    public function commentTweet($tid, $text)
+    {
+        $params['comment'] = $text;
+        $params['id'] = $tid;
+        $params['comment_ori'] = 0;
+        $this->_api('comments/create', $params, 'post');
+    }
+
+    /**
      * 发起一个新浪API请求
      * @param string $command 接口名称 如：users/show
      * @param array $params 接口参数  array('content'=>'test');

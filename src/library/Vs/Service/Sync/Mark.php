@@ -66,7 +66,7 @@ class Vs_Service_Sync_Mark extends Vs_Service_Sync_Abstract
         // 马上同步一下
         $this->sync($type);
 
-        // todo:提醒重新授权
+        // 提醒重新授权
         $this->notify();
     }
 
@@ -80,13 +80,28 @@ class Vs_Service_Sync_Mark extends Vs_Service_Sync_Abstract
     private function _setSync($type)
     {
         $info = $this->getInfo();
-        $params['id'] = $this->getSyncId();
+        $id = $this->getSyncId();
         $params['t_access_token'] = $info['t_access_token'];
         $params['t_openid'] = $info['t_openid'];
         $params['s_access_token'] = $info['s_access_token'];
         $params['s_uid'] = $info['s_uid'];
         $params['type'] = $type;
-        $params['time'] = time();
-        Vs_Entity_Sync::single()->add($params);
+        $rec = Vs_Entity_Sync::single()->get($id);
+        if ($rec) {
+            // update, the same access token
+            if ($rec['t_access_token'] === $params['t_access_token'] &&
+                $rec['s_access_token'] === $params['s_access_token']) {
+                Vs_Entity_Sync::single()->update($id, $params);
+            // update, the new access token
+            } else {
+                $params['time'] = time();
+                Vs_Entity_Sync::single()->update($id, $params);
+            }
+        } else {
+            // insert
+            $params['id'] = $id;
+            $params['time'] = time();
+            Vs_Entity_Sync::single()->add($params);
+        }
     }
 }

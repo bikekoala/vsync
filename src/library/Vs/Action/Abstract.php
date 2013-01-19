@@ -64,8 +64,8 @@ abstract class Vs_Action_Abstract extends Su_Ctrl_Action
      */
     private function _getAuth()
     {
-        $o = new Vs_Service_Abstract;
-        $info = $o->getInfo();
+        $r = new Vs_Service_Auth;
+        $info = $r->getInfo();
 
         $this->auth['tencent'] = ! empty($info['t_access_token']);
         $this->auth['sina'] = ! empty($info['s_access_token']);

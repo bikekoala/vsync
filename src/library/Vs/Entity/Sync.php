@@ -11,7 +11,7 @@ class Vs_Entity_Sync extends Vs_Entity_Abstract
 
     /**
      * add
-     * 新建/更新一条同步记录
+     * 添加一条同步记录
      *
      * @param array $params
      * @return bool
@@ -21,10 +21,7 @@ class Vs_Entity_Sync extends Vs_Entity_Abstract
         // bindvalue
         $keys = array_keys($params);
         $vals= Su_Db::genSqlValueStr($keys, $params);
-        $sql = "INSERT INTO `{$this->table}` 
-                SET {$vals} 
-                ON DUPLICATE KEY
-                UPDATE {$vals}";
+        $sql = "INSERT INTO `{$this->table}` SET {$vals}";
         $sth = $this->pdo->prepare($sql);
         Su_Db::genSqlBindValue($sth, $keys, $params);
 

@@ -7,17 +7,9 @@
  */
 class Vs_Service_Sync_Abstract extends Vs_Service_Abstract
 {
-    /**
-     * getSyncId
-     * 组装同步唯一标识
-     *
-     * @return string
-     */
-    public function getSyncId()
-    {
-        $info = $this->getInfo();
-        return md5($info['t_openid'] . $info['s_uid']);
-    }
+    private $_ttid; // 最近一条腾讯围脖id
+
+    private $_stid; // 最近一条新浪围脖id
 
     /**
      * sync
@@ -37,11 +29,40 @@ class Vs_Service_Sync_Abstract extends Vs_Service_Abstract
      * notify
      * 发送私信，提醒注意重新授权
      *
-     * @param int $days 第几天提醒
+     * @param int $days 提前几天？
      * @return void
      */
-    public function notify($days = 6)
+    public function notify($days = 7)
     {
+        $id = $this->getSyncId();
+        $rec = Vs_Entity_Sync::single()->get($id);
+
+        // 检查有没提醒过
+        if (! $rec['is_notify']) {
+            $walkTime = time() - $rec['time']; // 授权的进行时长
+            $notifyTime = $this->getExpireTime() - $days*24*60*60; // 提醒时长
+
+            // 逾期
+            if ($walkTime >= $notifyTime) {
+                // 私信通知
+                $url = INDEX . '?do=cauth.all';
+                $msg = "hi~, 我是 @%s ，您的应用授权快到期了，快快看看去吧～ %s";
+                if ($this->_ttid) {
+                    $msg = sprintf($msg, $this->conf->tencent->account, $url);
+                    $api = new Vs_Service_Tencent_Api;
+                    $api->commentTweet($this->_ttid, $msg);
+                }
+                if ($this->_stid) {
+                    $msg = sprintf($msg, $this->conf->sina->account, $url);
+                    $api = new Vs_Service_Sina_Api;
+                    $api->commentTweet($this->_stid, $msg);
+                }
+
+                // 标记已通知
+                $params['is_notify'] = 1;
+                Vs_Entity_Sync::single()->update($id, $params);
+            }
+        }
     }
 
     /**
@@ -85,6 +106,7 @@ class Vs_Service_Sync_Abstract extends Vs_Service_Abstract
             $api = new Vs_Service_Tencent_Api;
             $tweet = $api->getLastTweet();
         }
+        $this->_ttid = $tweet['id'];
 
         // 避免重复发送
         $id = $this->getSyncId();
@@ -120,6 +142,7 @@ class Vs_Service_Sync_Abstract extends Vs_Service_Abstract
             $api = new Vs_Service_Sina_Api;
             $tweet = $api->getLastTweet();
         }
+        $this->_stid = $tweet['idstr'];
 
         // 避免重复发送
         $id = $this->getSyncId();

@@ -18,12 +18,15 @@ class Vs_Config extends Su_Config
         $conf['tencent']['account'] = 'popfeng';
         $conf['tencent']['app_key'] = 801263889;
         $conf['tencent']['app_secret'] = '8e7ee4dab1ae84212e563f55ea309ee0';
+        $conf['tencent']['expire_time'] = 7; // accesstoken有效期,初级7天
 
         /**
          * Sina
          */
+        $conf['sina']['account'] = '熊者孙';
         $conf['sina']['app_key'] = 3416304519;
         $conf['sina']['app_secret'] = '63982b8a4c7eb681ecb4702b4f270c54';
+        $conf['sina']['expire_time'] = 7; // accesstoken有效期,初级7天
         
         /**
          * Sync type
@@ -39,7 +42,6 @@ class Vs_Config extends Su_Config
         $conf['cookie']['key'] = 'suv_auth'; // the key of cookie
         $conf['cookie']['encrypt_key'] = 'lhasa'; // cookie des加密的key
         $conf['cookie']['serial_secret'] = 'Let life be beautiful like summer flowers'; // 验证auth信息完整性的字符串 
-        $conf['cookie']['expire_time'] = 7*60*60*24; // 过期时间，视应用授权期限定
 
         /**
          * Mysql pdo

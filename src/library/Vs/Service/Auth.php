@@ -7,7 +7,6 @@
  */
 class Vs_Service_Auth extends Vs_Service_Abstract
 {
-
     /**
      * getAuth
      * 获取记录在cookie中的授权信息

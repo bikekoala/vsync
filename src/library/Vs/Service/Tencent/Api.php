@@ -100,6 +100,39 @@ class Vs_Service_Tencent_Api extends Vs_Service_Abstract
     }
 
     /**
+     * sendNotification
+     * 发送一条私信通知
+     *
+     * @param string $text
+     * @return void
+     */
+    public function sendNotification($text)
+    {
+        /**
+         * todo:
+         * 公告：由于本API最近发现有些开发者不遵循开发规范，
+         * 有严重的恶意发送私信操作，被大量用户举报，现临时
+         * 决定关闭此API的调用权限，需要使用私信的应用，可以
+         * 联系商务联系人发送邮件，申请私信接口权限!
+         */
+    }
+
+    /**
+     * commentTweet
+     * 评论一条围脖
+     *
+     * @param string $tid
+     * @param string $text
+     * @return void
+     */
+    public function commentTweet($tid, $text)
+    {
+        $params['content'] = $text;
+        $params['reid'] = $tid;
+        $this->_api('t/comment', $params, 'post');
+    }
+
+    /**
      * 发起一个腾讯API请求
      * @param $command 接口名称 如：t/add
      * @param $params 接口参数  array('content'=>'test');
@@ -161,6 +194,11 @@ class Vs_Service_Tencent_Api extends Vs_Service_Abstract
                     Vs_Service_Tencent_Auth::clearAuthInfo();
             }
             throw new Exception($msg);
+        }
+
+        // 其他错误
+        if (0 != $data['ret']) {
+            throw new Exception('tencent:' . $data['msg']);
         }
     }
 }
