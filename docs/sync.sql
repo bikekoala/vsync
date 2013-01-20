@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS `sync` (
   `is_notify` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否通知',
   `type` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '同步方式(0关闭1双向2腾讯->新浪3新浪->腾讯)',
   `counter` int(5) unsigned NOT NULL DEFAULT '0' COMMENT '计数器',
+  `exc_times` int(5) unsigned NOT NULL DEFAULT '0' COMMENT '异常次数',
   `time` int(10) unsigned NOT NULL COMMENT '记录创建/修改时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)

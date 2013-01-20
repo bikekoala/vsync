@@ -46,14 +46,13 @@ class Vs_Service_Sync_Abstract extends Vs_Service_Abstract
             if ($walkTime >= $notifyTime) {
                 // 私信通知
                 $url = INDEX . '?do=cauth.all';
-                $msg = "hi~, 我是 @%s ，您的应用授权快到期了，快快看看去吧～ %s";
                 if ($this->_ttid) {
-                    $msg = sprintf($msg, $this->conf->tencent->account, $url);
+                    $msg = sprintf($this->conf->notification_text, $this->conf->tencent->account, $url);
                     $api = new Vs_Service_Tencent_Api;
                     $api->commentTweet($this->_ttid, $msg);
                 }
                 if ($this->_stid) {
-                    $msg = sprintf($msg, $this->conf->sina->account, $url);
+                    $msg = sprintf($this->conf->notification_text, $this->conf->sina->account, $url);
                     $api = new Vs_Service_Sina_Api;
                     $api->commentTweet($this->_stid, $msg);
                 }

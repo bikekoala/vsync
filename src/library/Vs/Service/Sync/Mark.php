@@ -86,6 +86,8 @@ class Vs_Service_Sync_Mark extends Vs_Service_Sync_Abstract
         $params['s_access_token'] = $info['s_access_token'];
         $params['s_uid'] = $info['s_uid'];
         $params['type'] = $type;
+        $params['is_notify'] = 0;
+        $params['exc_times'] = 0;
         $rec = Vs_Entity_Sync::single()->get($id);
         if ($rec) {
             // update, the same access token

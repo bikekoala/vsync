@@ -75,8 +75,8 @@ class Vs_Entity_Sync extends Vs_Entity_Abstract
         }
 
         $sql = "SELECT *
-                FROM `{$this->table}`
-                WHERE `id`='{$id}'";
+            FROM `{$this->table}`
+            WHERE `id`='{$id}'";
         $sth = $this->pdo->prepare($sql);
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         try {
@@ -97,9 +97,9 @@ class Vs_Entity_Sync extends Vs_Entity_Abstract
     public function getList()
     {
         $sql = "SELECT *
-                FROM `{$this->table}`
-                WHERE type!={$this->conf['sync']['close']}
-                ORDER BY `time` DESC";
+            FROM `{$this->table}`
+            WHERE type!={$this->conf['sync']['close']}
+            ORDER BY `time` DESC";
         $sth = $this->pdo->prepare($sql);
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         try {

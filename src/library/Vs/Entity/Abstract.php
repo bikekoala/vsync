@@ -7,14 +7,14 @@
  */
 class Vs_Entity_Abstract
 {
-	protected $pdo;
-	protected $conf;
+    protected $pdo;
+    protected $conf;
     protected $table;
 
-	public function __construct()
-	{
-		$this->conf = Vs_Config::single();
-		$this->pdo = Su_Db::getInstance($this->conf['pdo']);
+    public function __construct()
+    {
+        $this->conf = Vs_Config::single();
+        $this->pdo = Su_Db::getInstance($this->conf['pdo']);
     }
 
     /**
