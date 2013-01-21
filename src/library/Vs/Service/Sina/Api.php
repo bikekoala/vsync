@@ -7,7 +7,9 @@
  */
 class Vs_Service_Sina_Api extends Vs_Service_Abstract
 {
-    const API = 'https://api.weibo.com/2/'; // 接口url
+    public $access_token;
+
+    public $uid;
 
     /**
      * getUserInfo
@@ -17,7 +19,7 @@ class Vs_Service_Sina_Api extends Vs_Service_Abstract
      */
     public function getUserInfo()
     {
-        $params['uid'] = $this->getInfo('s_uid');
+        $params['uid'] = $this->uid;
         return $this->_api('users/show', $params);
     }
 
@@ -109,13 +111,13 @@ class Vs_Service_Sina_Api extends Vs_Service_Abstract
     private function _api($command, $params = array(), $method = 'get')
     {
         // 鉴权参数
-        $params['access_token'] = $this->getInfo('s_access_token');
+        $params['access_token'] = $this->access_token;
         if ('post' === $method) {
             $params = http_build_query($params);
         }
 
         // 请求接口
-        $url = self::API . trim($command, '/') . '.json';
+        $url = $this->conf->sina->api . trim($command, '/') . '.json';
         $curl = new Su_Curl($url);
         $data = $curl->rest($params, $method);
 
@@ -144,5 +146,22 @@ class Vs_Service_Sina_Api extends Vs_Service_Abstract
             $msg = "code:{$data['error_code']},msg:{$data['error']}.请尝试刷新页面并重新登录～";
             throw new Exception($msg);
         }
+    }
+
+    /**
+     * __construct
+     * 初始化授权信息
+     *
+     * @param array $info
+     * @return void
+     */
+    public function __construct($info = array())
+    {
+        parent::__construct();
+        if (empty($info)) {
+            $info = $this->getInfo();
+        }
+        $this->access_token = $info['s_access_token'];
+        $this->uid = $info['s_uid'];
     }
 }

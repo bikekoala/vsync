@@ -64,8 +64,47 @@ class Vs_Service_Abstract
      */
     public function getSyncId()
     {
+        static $id; // 静态化
+        if ($id) {
+            return $id;
+        }
+
         $info = $this->getInfo();
-        return md5($info['t_openid'] . $info['s_uid']);
+        $id = md5($info['t_openid'] . $info['s_uid']);
+        return $id;
+    }
+
+    /**
+     * stopSync
+     * 停止自动同步
+     *
+     * @return void
+     */
+    public function stopSync()
+    {
+        $id = $this->getSyncId();
+
+        $params['type'] = $this->conf->sync->close;
+        Vs_Entity_Sync::single()->update($id, $params);
+    }
+
+    /**
+     * setExc
+     * 记录异常次数，超限时停止自动同步
+     *
+     * @return void
+     */
+    public function setExc()
+    {
+        $id = $this->getSyncId();
+        $rec = Vs_Entity_Sync::single()->get($id);
+
+        if ($rec['exc_times'] < $this->conf->exc_times_limit) {
+            $params['exc_times'] = $rec['exc_times'] == 0 ? 1 : ++$rec['exc_times'];
+            Vs_Entity_Sync::single()->update($id, $params);
+        } else {
+            $this->stopSync();
+        }
     }
 
     /**

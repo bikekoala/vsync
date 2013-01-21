@@ -20,7 +20,7 @@ class Vs_Action_Cauth_All extends Vs_Action_Abstract
         // 停止自动同步
         if ($this->auth['tencent'] && $this->auth['sina']) {
             $r = new Vs_Service_Auth;
-            $r->stopSync(true);
+            $r->stopSync();
         }
 
         // 清除腾讯授权

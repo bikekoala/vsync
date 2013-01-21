@@ -32,7 +32,7 @@ class Vs_Service_Sync_Abstract extends Vs_Service_Abstract
      * @param int $days 提前几天？
      * @return void
      */
-    public function notify($days = 7)
+    public function notify($days = 1)
     {
         $id = $this->getSyncId();
         $rec = Vs_Entity_Sync::single()->get($id);
@@ -45,15 +45,16 @@ class Vs_Service_Sync_Abstract extends Vs_Service_Abstract
             // 逾期
             if ($walkTime >= $notifyTime) {
                 // 私信通知
+                $info = $this->getInfo();
                 $url = INDEX . '?do=cauth.all';
                 if ($this->_ttid) {
                     $msg = sprintf($this->conf->notification_text, $this->conf->tencent->account, $url);
-                    $api = new Vs_Service_Tencent_Api;
+                    $api = new Vs_Service_Tencent_Api($info);
                     $api->commentTweet($this->_ttid, $msg);
                 }
                 if ($this->_stid) {
                     $msg = sprintf($this->conf->notification_text, $this->conf->sina->account, $url);
-                    $api = new Vs_Service_Sina_Api;
+                    $api = new Vs_Service_Sina_Api($info);
                     $api->commentTweet($this->_stid, $msg);
                 }
 
@@ -72,15 +73,16 @@ class Vs_Service_Sync_Abstract extends Vs_Service_Abstract
      */
     private function _duplex()
     {
+        $info = $this->getInfo();
         // 获得最新一条腾讯围脖
-        $api = new Vs_Service_Tencent_Api;
+        $api = new Vs_Service_Tencent_Api($info);
         $tTweet = $api->getLastTweet();
         // 获得最新一条新浪围脖
-        $api = new Vs_Service_Sina_Api;
+        $api = new Vs_Service_Sina_Api($info);
         $sTweet = $api->getLastTweet();
 
-        $this->_t2s($tTweet); // 腾讯->新浪
         $this->_s2t($sTweet); // 新浪->腾讯
+        $this->_t2s($tTweet); // 腾讯->新浪
     }
 
     private function _close()
@@ -100,9 +102,10 @@ class Vs_Service_Sync_Abstract extends Vs_Service_Abstract
      */
     private function _t2s($tweet = array())
     {
+        $info = $this->getInfo();
         // 获得最新一条腾讯围脖
         if (empty($tweet)) {
-            $api = new Vs_Service_Tencent_Api;
+            $api = new Vs_Service_Tencent_Api($info);
             $tweet = $api->getLastTweet();
         }
         $this->_ttid = $tweet['id'];
@@ -113,7 +116,7 @@ class Vs_Service_Sync_Abstract extends Vs_Service_Abstract
         if ($rec['t_tweet_id'] == $tweet['id']) return;
 
         // 发送一条新浪围脖
-        $api = new Vs_Service_Sina_Api;
+        $api = new Vs_Service_Sina_Api($info);
         if (isset($tweet['image'])) {
             $api->sentImageTweet($tweet['text'], reset($tweet['image']), $tweet);
         } else {
@@ -122,7 +125,7 @@ class Vs_Service_Sync_Abstract extends Vs_Service_Abstract
 
         // 更新腾讯围脖记录
         $params['t_tweet_id'] = $tweet['id'];
-        $params['counter'] = $rec['counter'] === 0 ? 1 : $rec['counter']++;
+        $params['counter'] = $rec['counter'] == 0 ? 1 : ++$rec['counter'];
         $params['time'] = time();
         Vs_Entity_Sync::single()->update($id, $params);
     }
@@ -136,9 +139,10 @@ class Vs_Service_Sync_Abstract extends Vs_Service_Abstract
      */
     private function _s2t($tweet = array())
     {
+        $info = $this->getInfo();
         // 获得最新一条新浪围脖
         if (empty($tweet)) {
-            $api = new Vs_Service_Sina_Api;
+            $api = new Vs_Service_Sina_Api($info);
             $tweet = $api->getLastTweet();
         }
         $this->_stid = $tweet['idstr'];
@@ -149,7 +153,7 @@ class Vs_Service_Sync_Abstract extends Vs_Service_Abstract
         if ($rec['s_tweet_id'] == $tweet['idstr']) return;
 
         // 发送一条腾讯围脖
-        $api = new Vs_Service_Tencent_Api;
+        $api = new Vs_Service_Tencent_Api($info);
         if (isset($tweet['original_pic'])) {
             $imgurl = $api->uplodeImage($tweet['original_pic']);
             $api->sentImageTweet($tweet['text'], $imgurl, $tweet);
@@ -159,7 +163,7 @@ class Vs_Service_Sync_Abstract extends Vs_Service_Abstract
 
         // 更新新浪围脖记录
         $params['s_tweet_id'] = $tweet['idstr'];
-        $params['counter'] = $rec['counter'] === 0 ? 1 : $rec['counter']++;
+        $params['counter'] = $rec['counter'] == 0 ? 1 : ++$rec['counter'];
         $params['time'] = time();
         Vs_Entity_Sync::single()->update($id, $params);
     }

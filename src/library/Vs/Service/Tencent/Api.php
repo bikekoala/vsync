@@ -7,7 +7,9 @@
  */
 class Vs_Service_Tencent_Api extends Vs_Service_Abstract
 {
-    const API = 'https://open.t.qq.com/api/'; // 接口url
+    public $access_token;
+
+    public $openid;
 
     /**
      * getUserInfo
@@ -29,7 +31,7 @@ class Vs_Service_Tencent_Api extends Vs_Service_Abstract
      */
     public function isFans()
     {
-        $params['names'] = $this->conf['tencent']['account'];
+        $params['names'] = $this->conf->tencent->account;
         $params['flat'] = 1; // 检测收听的人
         $r = $this->_api('friends/check', $params);
         return ! (bool) $r['ret'];
@@ -142,17 +144,17 @@ class Vs_Service_Tencent_Api extends Vs_Service_Abstract
     private function _api($command, $params = array(), $method = 'get')
     {
         // 鉴权参数
-        $params['access_token'] = $this->getInfo('t_access_token');
-        $params['openid'] = $this->getInfo('t_openid');
-        $params['oauth_consumer_key'] = $this->conf['tencent']['app_key'];
+        $params['access_token'] = $this->access_token;
+        $params['openid'] = $this->openid;
+        $params['oauth_consumer_key'] = $this->conf->tencent->app_key;
         $params['oauth_version'] = '2.a';
         $params['clientip'] = Su_Func::ip();
         $params['scope'] = 'all';
         $params['appfrom'] = 'php-sdk2.0beta';
         $params['seqid'] = time();
-        $params['serverip'] = $_SERVER['SERVER_ADDR'];
+        $params['serverip'] = Su_Func::ip();
         $params['format'] = 'json';
-        $url = self::API . trim($command, '/');
+        $url = $this->conf->tencent->api . trim($command, '/');
 
         // 请求接口
         $curl = new Su_Curl($url);
@@ -183,7 +185,10 @@ class Vs_Service_Tencent_Api extends Vs_Service_Abstract
                 // accesstoken过期
                 case 37 :
                     $msg = '腾讯围脖授权过期，请刷新页面重新登录～';
-                    Vs_Service_Tencent_Auth::clearAuthInfo();
+                    if (! CLI) {
+                        $r = new Vs_Service_Tencent_Auth;
+                        $r->clearAuth();
+                    }
                     break;
                 // 冷不丁的会出现未知错误，再次刷新即可
                 case 41 :
@@ -191,7 +196,10 @@ class Vs_Service_Tencent_Api extends Vs_Service_Abstract
                     break;
                 default :
                     $msg = '腾讯围脖接口读取失败，请刷新页面重新登录～';
-                    Vs_Service_Tencent_Auth::clearAuthInfo();
+                    if (! CLI) {
+                        $r = new Vs_Service_Tencent_Auth;
+                        $r->clearAuth();
+                    }
             }
             throw new Exception($msg);
         }
@@ -200,5 +208,22 @@ class Vs_Service_Tencent_Api extends Vs_Service_Abstract
         if (0 != $data['ret']) {
             throw new Exception('tencent:' . $data['msg']);
         }
+    }
+
+    /**
+     * __construct
+     * 初始化授权信息
+     *
+     * @param array $info
+     * @return void
+     */
+    public function __construct($info = array())
+    {
+        parent::__construct();
+        if (empty($info)) {
+            $info = $this->getInfo();
+        }
+        $this->access_token = $info['t_access_token'];
+        $this->openid = $info['t_openid'];
     }
 }

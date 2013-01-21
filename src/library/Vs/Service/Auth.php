@@ -23,31 +23,6 @@ class Vs_Service_Auth extends Vs_Service_Abstract
     }
 
     /**
-     * stopSync
-     * 停止自动同步
-     *
-     * @param bool $force 是否强制停止同步，否时自动检查异常次数是否超限
-     * @return void
-     */
-    public function stopSync($force = false)
-    {
-        $id = $this->getSyncId();
-
-        // 强制停止自动同步
-        if ($force) {
-            $params['type'] = $this->conf->sync->close;
-            Vs_Entity_Sync::single()->update($id, $params);
-        // 异常次数超限时自动停止自动同步
-        } else {
-            $rec = Vs_Entity_Sync::single()->get($id);
-            if ($rec['exc_times'] >= $this->conf->exc_times_limit) {
-                $params['type'] = $this->conf->sync->close;
-                Vs_Entity_Sync::single()->update($id, $params);
-            }
-        }
-    }
-
-    /**
      * _unserializeAuth
      * 解序列化cookie授权
      *

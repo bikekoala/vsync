@@ -5,7 +5,7 @@
  *
  * @author popfeng <popfeng@yeah.net>
  */
-class Vs_Service_Sync_Run extends Vs_Service_Abstract
+class Vs_Service_Sync_Run extends Vs_Service_Sync_Abstract
 {
     /**
      * zouni
@@ -15,5 +15,16 @@ class Vs_Service_Sync_Run extends Vs_Service_Abstract
      */
     public function zouni()
     {
+        $list = Vs_Entity_Sync::single()->getList();
+        foreach ($list as $item) {
+            try {
+                $this->setInfo($item); // 设置信息
+                $this->sync($item['type']); // 马上同步一下
+                $this->notify(); // 提醒重新授权
+            } catch (Exception $e) {
+                // 记录异常次数，超限时停止自动同步
+                $this->setExc();
+            }
+        }
     }
 }

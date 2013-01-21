@@ -15,7 +15,7 @@ class Vs_Service_Sync_Mark extends Vs_Service_Sync_Abstract
      */
     public function duplex()
     {
-        $this->_process($this->conf['sync']['duplex']);
+        $this->_process($this->conf->sync->duplex);
     }
 
     /**
@@ -26,7 +26,7 @@ class Vs_Service_Sync_Mark extends Vs_Service_Sync_Abstract
      */
     public function tencentToSina()
     {
-        $this->_process($this->conf['sync']['t2s']);
+        $this->_process($this->conf->sync->t2s);
     }
 
     /**
@@ -37,7 +37,7 @@ class Vs_Service_Sync_Mark extends Vs_Service_Sync_Abstract
      */
     public function sinaToTencent()
     {
-        $this->_process($this->conf['sync']['s2t']);
+        $this->_process($this->conf->sync->s2t);
     }
 
     /**
@@ -48,7 +48,7 @@ class Vs_Service_Sync_Mark extends Vs_Service_Sync_Abstract
      */
     public function close()
     {
-        $this->_process($this->conf['sync']['close']);
+        $this->_process($this->conf->sync->close);
     }
 
     /**

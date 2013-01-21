@@ -18,6 +18,7 @@ class Vs_Config extends Su_Config
         $conf['tencent']['account'] = 'popfeng'; // 我的腾讯微博账号
         $conf['tencent']['app_key'] = 801263889; // 应用授权 app key
         $conf['tencent']['app_secret'] = '8e7ee4dab1ae84212e563f55ea309ee0'; // 应用授权 app secret
+        $conf['tencent']['api'] = 'https://open.t.qq.com/api/'; // 接口url
         $conf['tencent']['expire_time'] = 7; // accesstoken有效期,初级7天
 
         /**
@@ -26,6 +27,7 @@ class Vs_Config extends Su_Config
         $conf['sina']['account'] = '熊者孙'; // 我的新浪微博账号
         $conf['sina']['app_key'] = 3416304519; // 应用授权 app key
         $conf['sina']['app_secret'] = '63982b8a4c7eb681ecb4702b4f270c54'; // 应用授权 app secret
+        $conf['sina']['api'] = 'https://api.weibo.com/2/'; // 接口url
         $conf['sina']['expire_time'] = 7; // accesstoken有效期,初级7天
         
         /**
