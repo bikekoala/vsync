@@ -20,12 +20,8 @@ if ($argc != 3) {
     $msg = '需要传递两个数字参数，第一个是总任务数，第二个是当前任务序号。';
     exit($msg);
 }
-if (! is_numeric($argv[1]) || !is_numeric($argv[2])) {
-    $msg = '参数必须为正整数。';
-    exit($msg);
-}
-if ($argv[1] == 0 || $argv[2] == 0) {
-    $msg = '参数不能为零。';
+if ((int) $argv[1] == 0 || (int) $argv[2] == 0) {
+    $msg = '参数必须为非零正整数。';
     exit($msg);
 }
 if ($argv[1] < $argv[2]) {
