@@ -136,14 +136,17 @@ class Vs_Service_Sina_Api extends Vs_Service_Abstract
      */
     private function _checkErr($data)
     {
+        $msg = 'sina:';
+
         // 链接中断
         if (empty($data)) {
-            throw new Exception('连接中断～');
+            $msg .= '连接中断～';
+            throw new Exception($msg);
         }
 
         // 报错,模糊处理~
         if (isset($data['error_code'])) {
-            $msg = "code:{$data['error_code']},msg:{$data['error']}.请尝试刷新页面并重新登录～";
+            $msg .= ",code:{$data['error_code']},msg:{$data['error']}.请尝试刷新页面并重新登录～";
             throw new Exception($msg);
         }
     }

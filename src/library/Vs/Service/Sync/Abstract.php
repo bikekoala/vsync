@@ -40,6 +40,7 @@ class Vs_Service_Sync_Abstract extends Vs_Service_Abstract
      */
     public function notify($days = 1)
     {
+        $info = $this->getInfo();
         // 检查有没提醒过
         if (! $info['is_notify']) {
             $walkTime = time() - $info['time']; // 授权的进行时长
@@ -85,7 +86,7 @@ class Vs_Service_Sync_Abstract extends Vs_Service_Abstract
         $sTweet = $api->getLastTweet();
 
         $this->_s2t($sTweet); // 新浪->腾讯
-        $this->_t2s($tTweet); // 腾讯->新浪
+        $this->_t2s($tTweet, true); // 腾讯->新浪
     }
 
     private function _close()
@@ -101,17 +102,23 @@ class Vs_Service_Sync_Abstract extends Vs_Service_Abstract
      * 腾讯->新浪，单向同步一条围脖
      *
      * @param array $tweet
+     * @param bool $isLast 双向同步时是否是最后一方
      * @return void
      */
-    private function _t2s($tweet = array())
+    private function _t2s($tweet = array(), $isLast = false)
     {
         $info = $this->getInfo();
-        // 获得最新一条腾讯围脖
-        if (empty($tweet)) {
+        // 获得最新一条腾讯围脖并设置围脖id
+        if (empty($tweet) || $isLast) {
             $api = new Vs_Service_Tencent_Api($info);
-            $tweet = $api->getLastTweet();
+            $data = $api->getLastTweet();
+            if ($isLast) {
+                $this->_ttid = $data['id'];
+            } else {
+                $tweet = $data;
+            }
         }
-        $this->_ttid = $tweet['id'];
+        $this->_ttid || $this->_ttid = $tweet['id'];
 
         // 避免重复发送
         if ($info['t_tweet_id'] == $tweet['id']) return;
@@ -119,16 +126,17 @@ class Vs_Service_Sync_Abstract extends Vs_Service_Abstract
         // 发送一条新浪围脖
         $api = new Vs_Service_Sina_Api($info);
         if (isset($tweet['image'])) {
-            $api->sentImageTweet($tweet['text'], reset($tweet['image']), $tweet);
+            $status = $api->sentImageTweet($tweet['text'], reset($tweet['image']), $tweet);
         } else {
-            $api->sentTextTweet($tweet['text'], $tweet);
+            $status = $api->sentTextTweet($tweet['text'], $tweet);
         }
 
-        // 更新腾讯围脖记录
-        $params['t_tweet_id'] = $tweet['id'];
+        // 更新围脖记录
+        $params['t_tweet_id'] = $this->_ttid;
+        $params['s_tweet_id'] = $status['idstr'];
         $params['counter'] = $info['counter'] == 0 ? 1 : ++$info['counter'];
         $params['time'] = time();
-        Vs_Entity_Sync::single()->update($id, $params);
+        Vs_Entity_Sync::single()->update($info['id'], $params);
     }
 
     /**
@@ -136,17 +144,23 @@ class Vs_Service_Sync_Abstract extends Vs_Service_Abstract
      * 新浪->腾讯，单向同步一条围脖
      *
      * @param array $tweet
+     * @param bool $isLast 双向同步时是否是最后一方
      * @return void
      */
-    private function _s2t($tweet = array())
+    private function _s2t($tweet = array(), $isLast = false)
     {
         $info = $this->getInfo();
-        // 获得最新一条新浪围脖
-        if (empty($tweet)) {
+        // 获得最新一条新浪围脖并设置围脖id
+        if (empty($tweet) || $isLast) {
             $api = new Vs_Service_Sina_Api($info);
-            $tweet = $api->getLastTweet();
+            $data = $api->getLastTweet();
+            if ($isLast) {
+                $this->_stid = $data['idstr'];
+            } else {
+                $tweet = $data;
+            }
         }
-        $this->_stid = $tweet['idstr'];
+        $this->_stid || $this->_stid = $tweet['idstr'];
 
         // 避免重复发送
         if ($info['s_tweet_id'] == $tweet['idstr']) return;
@@ -155,15 +169,16 @@ class Vs_Service_Sync_Abstract extends Vs_Service_Abstract
         $api = new Vs_Service_Tencent_Api($info);
         if (isset($tweet['original_pic'])) {
             $imgurl = $api->uplodeImage($tweet['original_pic']);
-            $api->sentImageTweet($tweet['text'], $imgurl, $tweet);
+            $status = $api->sentImageTweet($tweet['text'], $imgurl, $tweet);
         } else {
-            $api->sentTextTweet($tweet['text'], $tweet);
+            $status = $api->sentTextTweet($tweet['text'], $tweet);
         }
 
-        // 更新新浪围脖记录
-        $params['s_tweet_id'] = $tweet['idstr'];
+        // 更新围脖记录
+        $params['s_tweet_id'] = $this->_stid;
+        $params['t_tweet_id'] = $status['id'];
         $params['counter'] = $info['counter'] == 0 ? 1 : ++$info['counter'];
         $params['time'] = time();
-        Vs_Entity_Sync::single()->update($id, $params);
+        Vs_Entity_Sync::single()->update($info['id'], $params);
     }
 }

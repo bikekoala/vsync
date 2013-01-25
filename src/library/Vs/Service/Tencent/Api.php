@@ -66,7 +66,8 @@ class Vs_Service_Tencent_Api extends Vs_Service_Abstract
         }
         $params['content'] = $text;
         $params['pic_url'] = $url; // 经度
-        return $this->_api('t/add_pic_url', $params, 'post');
+        $data = $this->_api('t/add_pic_url', $params, 'post');
+        return $data['data'];
     }
 
     /**
@@ -84,7 +85,8 @@ class Vs_Service_Tencent_Api extends Vs_Service_Abstract
             $params['latitude'] = $data['geo']['latitude']; // 经度
         }
         $params['content'] = $text;
-        return $this->_api('t/add', $params, 'post');
+        $data = $this->_api('t/add', $params, 'post');
+        return $data['data'];
     }
 
     /**
@@ -174,9 +176,12 @@ class Vs_Service_Tencent_Api extends Vs_Service_Abstract
      */
     private function _checkErr($data)
     {
+        $msg = 'tencent:';
+
         // 链接中断
         if (empty($data)) {
-            throw new Exception('连接中断～');
+            $msg .= '连接中断～';
+            throw new Exception($msg);
         }
 
         // 鉴权失败
@@ -184,7 +189,7 @@ class Vs_Service_Tencent_Api extends Vs_Service_Abstract
             switch ($data['errcode']) {
                 // accesstoken过期
                 case 37 :
-                    $msg = '腾讯围脖授权过期，请刷新页面重新登录～';
+                    $msg .= '腾讯围脖授权过期，请刷新页面重新登录～';
                     if (! CLI) {
                         $r = new Vs_Service_Tencent_Auth;
                         $r->clearAuth();
@@ -192,10 +197,10 @@ class Vs_Service_Tencent_Api extends Vs_Service_Abstract
                     break;
                 // 冷不丁的会出现未知错误，再次刷新即可
                 case 41 :
-                    $msg = '腾讯围脖接口出现未知的鉴权错误，请刷新页面～';
+                    $msg .= '腾讯围脖接口出现未知的鉴权错误，请刷新页面～';
                     break;
                 default :
-                    $msg = '腾讯围脖接口读取失败，请刷新页面重新登录～';
+                    $msg .= '腾讯围脖接口读取失败，请刷新页面重新登录～';
                     if (! CLI) {
                         $r = new Vs_Service_Tencent_Auth;
                         $r->clearAuth();
@@ -206,7 +211,8 @@ class Vs_Service_Tencent_Api extends Vs_Service_Abstract
 
         // 其他错误
         if (0 != $data['ret']) {
-            throw new Exception('tencent:' . $data['msg']);
+            $msg .= $data['msg'];
+            throw new Exception($msg);
         }
     }
 
