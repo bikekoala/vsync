@@ -99,7 +99,8 @@ class Vs_Service_Abstract
         $id = $this->getSyncId();
         $rec = Vs_Entity_Sync::single()->get($id);
 
-        if ($rec['exc_times'] < $this->conf->exc_times_limit) {
+        // 当配置限制不为0 或者 实际次数超限时停止自动同步
+        if (0 == $this->conf->exc_times_limit || $rec['exc_times'] < $this->conf->exc_times_limit) {
             $params['exc_times'] = $rec['exc_times'] == 0 ? 1 : ++$rec['exc_times'];
             Vs_Entity_Sync::single()->update($id, $params);
         } else {
