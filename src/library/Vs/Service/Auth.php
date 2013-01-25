@@ -23,6 +23,24 @@ class Vs_Service_Auth extends Vs_Service_Abstract
     }
 
     /**
+     * getType
+     * 获取已知同步类型
+     *
+     * @return void
+     */
+    public function getType()
+    {
+        $id = $this->getSyncId();
+        $rec = Vs_Entity_Sync::single()->get($id);
+        if ($rec) {
+            $type = array_flip($this->conf['sync']);
+            return $type[$rec['type']];
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * _unserializeAuth
      * 解序列化cookie授权
      *

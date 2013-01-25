@@ -20,6 +20,12 @@ class Vs_Service_Sync_Abstract extends Vs_Service_Abstract
      */
     public function sync($type)
     {
+        // 初始化授权信息
+        $id = $this->getSyncId();
+        $rec = Vs_Entity_Sync::single()->get($id);
+        $this->setInfo($rec);
+
+        // 调用
         $class = array_flip($this->conf['sync']);
         $class = '_' . $class[$type];
         $this->$class();
@@ -34,12 +40,9 @@ class Vs_Service_Sync_Abstract extends Vs_Service_Abstract
      */
     public function notify($days = 1)
     {
-        $id = $this->getSyncId();
-        $rec = Vs_Entity_Sync::single()->get($id);
-
         // 检查有没提醒过
-        if (! $rec['is_notify']) {
-            $walkTime = time() - $rec['time']; // 授权的进行时长
+        if (! $info['is_notify']) {
+            $walkTime = time() - $info['time']; // 授权的进行时长
             $notifyTime = $this->getExpireTime() - $days*24*60*60; // 提醒时长
 
             // 逾期
@@ -111,9 +114,7 @@ class Vs_Service_Sync_Abstract extends Vs_Service_Abstract
         $this->_ttid = $tweet['id'];
 
         // 避免重复发送
-        $id = $this->getSyncId();
-        $rec = Vs_Entity_Sync::single()->get($id);
-        if ($rec['t_tweet_id'] == $tweet['id']) return;
+        if ($info['t_tweet_id'] == $tweet['id']) return;
 
         // 发送一条新浪围脖
         $api = new Vs_Service_Sina_Api($info);
@@ -125,7 +126,7 @@ class Vs_Service_Sync_Abstract extends Vs_Service_Abstract
 
         // 更新腾讯围脖记录
         $params['t_tweet_id'] = $tweet['id'];
-        $params['counter'] = $rec['counter'] == 0 ? 1 : ++$rec['counter'];
+        $params['counter'] = $info['counter'] == 0 ? 1 : ++$info['counter'];
         $params['time'] = time();
         Vs_Entity_Sync::single()->update($id, $params);
     }
@@ -148,9 +149,7 @@ class Vs_Service_Sync_Abstract extends Vs_Service_Abstract
         $this->_stid = $tweet['idstr'];
 
         // 避免重复发送
-        $id = $this->getSyncId();
-        $rec = Vs_Entity_Sync::single()->get($id);
-        if ($rec['s_tweet_id'] == $tweet['idstr']) return;
+        if ($info['s_tweet_id'] == $tweet['idstr']) return;
 
         // 发送一条腾讯围脖
         $api = new Vs_Service_Tencent_Api($info);
@@ -163,7 +162,7 @@ class Vs_Service_Sync_Abstract extends Vs_Service_Abstract
 
         // 更新新浪围脖记录
         $params['s_tweet_id'] = $tweet['idstr'];
-        $params['counter'] = $rec['counter'] == 0 ? 1 : ++$rec['counter'];
+        $params['counter'] = $info['counter'] == 0 ? 1 : ++$info['counter'];
         $params['time'] = time();
         Vs_Entity_Sync::single()->update($id, $params);
     }

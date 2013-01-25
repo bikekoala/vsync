@@ -7,14 +7,14 @@
  */
 class Vs_Action_Main extends Vs_Action_Abstract
 {
-	/**
-	 * run
+    /**
+     * run
      * 执行
-	 *
-	 * @return void
-	 */
-	public function run()
-	{
+     *
+     * @return void
+     */
+    public function run()
+    {
         try {
             /**
              * Tencent
@@ -43,6 +43,11 @@ class Vs_Action_Main extends Vs_Action_Abstract
             $this->response('exc', $e->getMessage());
         }
 
+        // 同步类型
+        $r = new Vs_Service_Auth;
+        $type = $r->getType();
+        $this->response('type', $type);
+        // 授权信息
         $this->response('auth', $this->auth);
         $this->tpl('index');
     }
