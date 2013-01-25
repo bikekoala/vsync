@@ -21,10 +21,10 @@
         <{if empty($exc)}>
         <select>
             <option selected="selected" disabled="disabled">执笔</option>
-            <option value="t2s" <{if $type == 't2s'}>selected="selected"<{/if}>>——&gt;</option>
-            <option value="s2t" <{if $type == 's2t'}>selected="selected"<{/if}>>&lt;——</option>
-            <option value="duplex" <{if $type == 'duplex'}>selected="selected"<{/if}>>&lt;——&gt;</option>
-            <option value="close" <{if $type == 'close'}>selected="selected"<{/if}>>X</option>
+            <option value="t2s" <{if $type == 't2s'}>selected="selected"<{/if}>>A、腾讯 → 新浪</option>
+            <option value="s2t" <{if $type == 's2t'}>selected="selected"<{/if}>>B、腾讯 ← 新浪</option>
+            <option value="duplex" <{if $type == 'duplex'}>selected="selected"<{/if}>>C、双向</option>
+            <option value="close" <{if $type == 'close'}>selected="selected"<{/if}>>D、关闭</option>
         </select>
         <{else}>
         <span><{$exc}></span>

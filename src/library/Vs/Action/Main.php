@@ -44,8 +44,12 @@ class Vs_Action_Main extends Vs_Action_Abstract
         }
 
         // 同步类型
-        $r = new Vs_Service_Auth;
-        $type = $r->getType();
+        if ($this->auth['tencent'] && $this->auth['sina']) {
+            $r = new Vs_Service_Auth;
+            $type = $r->getType();
+        } else {
+            $type = false;
+        }
         $this->response('type', $type);
         // 授权信息
         $this->response('auth', $this->auth);
