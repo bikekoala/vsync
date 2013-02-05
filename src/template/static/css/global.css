@@ -1,0 +1,33 @@
+@charset "utf-8";
+body {
+    margin: 0 auto;
+    background: #FFF url(../img/paper.png) no-repeat fixed top center;
+}
+#paper {
+    margin: 0 auto;
+    width: 400px;
+    height: 110px;
+    margin-top: 343px;
+    opacity: 0.5;
+}
+#paper > div{
+    float: left;
+}
+#tencent {
+    width: 100px;
+    height: 100px;
+    margin: 5px 0 0 10px;
+    background-color: red;
+}
+#opera {
+    width: 160px;
+    height: 100px;
+    margin: 5px 0 0 10px;
+    background-color: white;
+}
+#sina {
+    width: 100px;
+    height: 100px;
+    margin: 5px 0 0 10px;
+    background-color: yellow;
+}

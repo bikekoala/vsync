@@ -3,11 +3,13 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>白纸年华</title>
+<link rel="shortcut icon" href="static/img/favicon.ico" />
+<link rel="stylesheet" type="text/css" href="static/css/global.css" />
 <script type="text/javascript" src="static/js/jquery.min.js"></script>
 <script type="text/javascript" src="static/js/main.js"></script>
 </head>
 <body>
-<div>
+<div id="paper">
     <div id="tencent">
         <{if $auth.tencent}>
         <img src='<{$tencent.avator}>/100' width=100 />
@@ -21,8 +23,8 @@
         <{if empty($exc)}>
         <select>
             <option selected="selected" disabled="disabled">执笔</option>
-            <option value="t2s" <{if $type == 't2s'}>selected="selected"<{/if}>>A、腾讯 → 新浪</option>
-            <option value="s2t" <{if $type == 's2t'}>selected="selected"<{/if}>>B、腾讯 ← 新浪</option>
+            <option value="t2s" <{if $type == 't2s'}>selected="selected"<{/if}>>A、球球 → 新浪</option>
+            <option value="s2t" <{if $type == 's2t'}>selected="selected"<{/if}>>B、球球 ← 新浪</option>
             <option value="duplex" <{if $type == 'duplex'}>selected="selected"<{/if}>>C、双向</option>
             <option value="close" <{if $type == 'close'}>selected="selected"<{/if}>>D、关闭</option>
         </select>
@@ -30,7 +32,7 @@
         <span><{$exc}></span>
         <{/if}>
         <{else}>
-        <span>想做我粉丝吗？</span>
+        <span>你还不是我球球粉丝呢~</span>
         <{/if}>
         <{else}>
         <span>pk</span>
