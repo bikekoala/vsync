@@ -1,8 +1,10 @@
 <?PHP
-// check the mode
+/*
+// check the php env-mode
 if (substr(php_sapi_name(), 0, 3) !== 'cli') {
     exit('This Programe can only be run in CLI mode');
 }
+*/
 // set up the environment
 ini_set('display_errors', false);
 ini_set('max_execution_time', 1800);
@@ -16,20 +18,21 @@ Su_Facade::init($conf);
 
 // Process
 // 验证参数
-if ($argc != 3) {
-    $msg = '需要传递两个数字参数，第一个是总任务数，第二个是当前任务序号。';
+if (! isset($argv[1])) {
+    $msg = '需要传递一个参数: “a,b”，a是任务总数，b是当前任务序号。';
     exit($msg);
 }
-if ((int) $argv[1] == 0 || (int) $argv[2] == 0) {
+$params = explode(',', $argv[1]);
+if ((int) $params[0] == 0 || (int) $params[1] == 0) {
     $msg = '参数必须为非零正整数。';
     exit($msg);
 }
-if ($argv[1] < $argv[2]) {
+if ($params[0] < $params[1]) {
     $msg = '当前任务序号不可大于任务总数。';
     exit($msg);
 }
-$total = (int) $argv[1];
-$cur = (int) $argv[2];
+$total = (int) $params[0];
+$cur = (int) $params[1];
 
 // 分配任务，同步开始
 $sync = new Vs_Service_Sync_Run;
@@ -52,7 +55,8 @@ function sendmail() {
     if (! $status) {
         $title = '老板你好～';
         $msg .= '
-            ---------------------------------------
+
+            -------------------------------------------------------------------
             正面看 我是穷光蛋
             背面看 我是流浪汉
             我享受孤独总人在旅途 我女朋友说我没前途
@@ -64,6 +68,7 @@ function sendmail() {
             我向来只爱陌生人
             我从来不走寻常路';
         $mail = new PHPMailer();
+        $mail->CharSet = 'utf-8';
         $mail->SetFrom('pureage@sukai.me', '白纸年华长工');
         $mail->AddAddress('popfeng@yeah.net', '树袋大熊');
         $mail->Subject = $title;
