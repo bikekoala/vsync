@@ -187,13 +187,14 @@ class Vs_Service_Tencent_Api extends Vs_Service_Abstract
         // 鉴权失败
         if (3 == $data['ret']) {
             switch ($data['errcode']) {
-                // accesstoken过期
+                // token过期,停止自动同步
                 case 37 :
                     $msg .= '腾讯围脖授权过期，请刷新页面重新登录～';
                     if (! CLI) {
                         $r = new Vs_Service_Tencent_Auth;
                         $r->clearAuth();
                     }
+                    $this->stopSync();
                     break;
                 // 冷不丁的会出现未知错误，再次刷新即可
                 case 41 :

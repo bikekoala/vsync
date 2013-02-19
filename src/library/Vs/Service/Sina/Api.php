@@ -144,10 +144,18 @@ class Vs_Service_Sina_Api extends Vs_Service_Abstract
             throw new Exception($msg);
         }
 
-        // 报错,模糊处理~
+        // 报错
         if (isset($data['error_code'])) {
-            $msg .= ",code:{$data['error_code']},msg:{$data['error']}.请尝试刷新页面并重新登录～";
-            throw new Exception($msg);
+            switch ($data['error_code']) {
+                // token过期,停止自动同步
+                case '21315' :
+                case '21327' :
+                    return $this->stopSync();
+                // 模糊处理~
+                default :
+                    $msg .= ",code:{$data['error_code']},msg:{$data['error']}.请尝试刷新页面并重新登录～";
+                    throw new Exception($msg);
+            }
         }
     }
 

@@ -89,12 +89,15 @@ class Vs_Service_Sync_Abstract extends Vs_Service_Abstract
         $this->_t2s($tTweet, true); // 腾讯->新浪
     }
 
+    /**
+     * _close
+     * 停止自动同步
+     *
+     * @return void
+     */
     private function _close()
     {
-        $id = $this->getSyncId();
-        $params['type'] = 0;
-        $params['time'] = time();
-        Vs_Entity_Sync::single()->update($id, $params);
+        $this->stopSync();
     }
 
     /**

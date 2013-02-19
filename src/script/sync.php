@@ -42,6 +42,7 @@ for ($i=$cur-1, $l=count($list); $i<$l; $i+=$total) {
         $sync->zouni($list[$i]);
     } catch (Exception $e) {
         $msg = $e->getMessage();
+        $msg .= "\n\n\n" . var_export($list[$i], true);
         sendmail();
     }
 }

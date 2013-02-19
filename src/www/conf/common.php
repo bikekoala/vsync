@@ -1,9 +1,9 @@
 <?PHP
 // 命令行模式时
-if (substr(php_sapi_name(), 0, 3) === 'cli') {
-	define('CLI', true);
-} else {
+if (php_sapi_name() === 'litespeed') {
 	define('CLI', false);
+} else {
+	define('CLI', true);
 }
 //系统目录                     
 define('SYS_PATH', realpath(__DIR__ . '/../../../'));

@@ -85,6 +85,7 @@ class Vs_Service_Abstract
         $id = $this->getSyncId();
 
         $params['type'] = $this->conf->sync->close;
+        $params['time'] = time();
         Vs_Entity_Sync::single()->update($id, $params);
     }
 
