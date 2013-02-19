@@ -51,6 +51,7 @@ function grayscale($ele){
             arr[i] = this
         }
     })
+    if (arr.length == 0) return false
     var $ele = $(arr)
 
     // Fade in images so there isn't a color "pop" document load and then on window load
