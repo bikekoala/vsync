@@ -25,11 +25,13 @@ $(function(){
                 $ele.empty()
                 $ele.append('<a href="?do=oauth.'+app+'"><img src='+logo+' /></a>')
                 grayscale($ele.find('img'))
+                if ($('#paper a[app]').size() == 0) {
+                    $('#opera').empty()
+                }
             } else {
                 alert(j.msg)
             }
         })
-        return false
     })
 })
 
@@ -46,14 +48,16 @@ $(window).load(function(){
 function grayscale($ele){
     // 跨域图片不执行
     var arr = new Array()
-    $ele.each(function(i){
+    var i = 0
+    $ele.each(function(){
         if (this.src.indexOf(document.domain) >= 0) {
             arr[i] = this
+            i++
         }
     })
-    if (arr.length == 0) return false
+    if (i == 0) return false
     var $ele = $(arr)
-
+    
     // Fade in images so there isn't a color "pop" document load and then on window load
     $ele.animate({opacity:1},500)
 
