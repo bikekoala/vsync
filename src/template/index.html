@@ -10,17 +10,18 @@
 </head>
 <body>
 <div id="paper">
-    <div id="tencent">
+    <div id="tencent" class="logo">
         <{if $auth.tencent}>
-        <img src='<{$tencent.avator}>/100' width=100 />
+        <a href="javascript:;" app="tencent" title="退出"><img src='<{$tencent.avator}>'/></a>
         <{else}>
-        <a href="?do=Oauth.Tencent">球球</a>
+        <a href="?do=oauth.tencent"><img src='static/img/tencent_logo.png' /></a>
         <{/if}>
     </div>
     <div id="opera">
         <{if $auth.tencent && $auth.sina}>
-        <{if $tencent.is_fans == true}>
-        <{if empty($exc)}>
+        <{if isset($exc)}>
+        <span><{$exc}></span>
+        <{else}>
         <select>
             <option selected="selected" disabled="disabled">执笔</option>
             <option value="t2s" <{if $type == 't2s'}>selected="selected"<{/if}>>A、球球 → 新浪</option>
@@ -28,21 +29,15 @@
             <option value="duplex" <{if $type == 'duplex'}>selected="selected"<{/if}>>C、双向</option>
             <option value="close" <{if $type == 'close'}>selected="selected"<{/if}>>D、关闭</option>
         </select>
-        <{else}>
-        <span><{$exc}></span>
         <{/if}>
-        <{else}>
-        <span>你还不是我球球粉丝呢~</span>
-        <{/if}>
-        <{else}>
-        <span>pk</span>
+        <embed autostart=true hidden=true volume=80 src="http://911pop.com/qmoon/Preview/qmyl/upload/download/month/1343977359348.mp3">
         <{/if}>
     </div>
-    <div id="sina">
+    <div id="sina" class="logo">
         <{if $auth.sina}>
-        <img src='<{$sina.avator}>' width=100 />
+        <a href="javascript:;" app="sina" title="退出"><img src='<{$sina.avator}>'/></a>
         <{else}>
-        <a href="?do=Oauth.Sina">新浪</a>
+        <a href="?do=oauth.sina"><img src='static/img/sina_logo.png' /></a>
         <{/if}>
     </div>
 </div>

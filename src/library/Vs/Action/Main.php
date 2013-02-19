@@ -22,11 +22,14 @@ class Vs_Action_Main extends Vs_Action_Abstract
             if ($this->auth['tencent']) {
                 $api = new Vs_Service_Tencent_Api;
                 $info = $api->getUserInfo(); // 获取个人资料
-                $isFans = $api->isFans(); // 检查你是不是大熊的粉丝
 
-                $tencent['avator'] = $info['head'];
-                $tencent['is_fans'] = $isFans;
+                $tencent['avator'] = $info['head'] ? $info['head'].'/100' : '';
                 $this->response('tencent', $tencent);
+
+                // 检查你是不是大熊的粉丝
+                if (! $api->isFans()) {
+                    $this->response('exc', '你还不是我球球粉丝呢~');
+                }
             }
 
             /**

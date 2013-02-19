@@ -3,31 +3,42 @@ body {
     margin: 0 auto;
     background: #FFF url(../img/paper.png) no-repeat fixed top center;
 }
+img {
+    border: none;
+}
 #paper {
     margin: 0 auto;
-    width: 400px;
+    width: 450px;
     height: 110px;
     margin-top: 343px;
-    opacity: 0.5;
+    opacity: 0.8;
 }
 #paper > div{
+    height: 100px;
     float: left;
 }
-#tencent {
+.logo img {
     width: 100px;
-    height: 100px;
+    /*opacity: 0;*/
+}
+#tencent {
     margin: 5px 0 0 10px;
-    background-color: red;
 }
 #opera {
-    width: 160px;
-    height: 100px;
+    width: 180px;
     margin: 5px 0 0 10px;
-    background-color: white;
+}
+#opera span {
+    height: 100px;
+    display: table-cell;
+    vertical-align: middle;
+    overflow: hidden;
+    font: 12px/1.75 Tahoma,Arial,sans-serif;
+    color: #333;
+}
+#opera select {
+    margin: 40px 30px;
 }
 #sina {
-    width: 100px;
-    height: 100px;
     margin: 5px 0 0 10px;
-    background-color: yellow;
 }
